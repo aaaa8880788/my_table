@@ -1,0 +1,42 @@
+.uploadDialog {
+  // 头
+  .dialog-header{
+    display: flex;
+    align-items: center;
+    .dialog-header-title{
+      font-size: 18px;
+      font-weight: 700;
+      margin-right: 10px;
+    }
+  }
+  // 头
+  // body
+  .upload-demo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+     .el-upload-dragger {
+      width: 470px;
+     }
+  }
+  .warning-title-left {
+    margin-left: 20px;
+  }
+  .warning-title-right {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ff5656;
+  }
+  // body
+  // 尾
+  .dialog-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .submit-btn{
+      width: 80%;
+      margin: 0;
+    }
+  }
+  // 尾
+}

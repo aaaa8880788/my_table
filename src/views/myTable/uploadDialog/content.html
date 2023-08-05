@@ -1,0 +1,54 @@
+<el-dialog class="uploadDialog" :modal="false" :visible.sync="dialogVisible" :close-on-click-modal="false"
+  :title="title" :before-close="closeDialog"
+  width="530px">
+  <template slot="title">
+    <div class="dialog-header">
+      <div class="dialog-header-title">
+        <span>{{ title }}</span>
+      </div>
+      <div class="dialog-header-picker">
+        <el-date-picker
+          class="year-selector"
+          style="width: 140px;"
+          v-model="searchForm.yearMonth"
+          type="month"
+          key="month"
+          placeholder="请选择月份"
+          prefix-icon="none"
+          value-format="yyyy-MM"
+          :clearable="false"
+        >
+        </el-date-picker>
+      </div>
+    </div>
+  </template>
+  <template v-if="searchForm.yearMonth">
+    <el-row v-loading="pageLoading" :element-loading-text="pageLoadingText" >
+      <el-form ref="form" class="form" label-width="0" size="medium">
+        <el-form-item label="">
+          <el-upload 
+            class="upload-demo" 
+            ref="upload" action=""
+            drag 
+            :file-list="fileList"
+            :on-change="handleUploadChange"
+            :limit="1"
+            :auto-upload="false"
+            multiple>
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+    </el-row>
+    <el-row>
+      <span class="warning-title-left">请按照模板录入数据</span>
+      <span class="warning-title-right">导入会清空现有数据，请先导出一份数据备份</span>
+    </el-row>
+  </template>
+  <template slot="footer">
+    <div class="dialog-footer">
+      <el-button type="primary" class="submit-btn btn-detail" @click="toUploadFile" :disabled="pageLoading">提交</el-button>
+    </div>
+  </template>
+</el-dialog>

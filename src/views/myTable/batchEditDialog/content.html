@@ -1,0 +1,137 @@
+<el-dialog
+  :visible.sync="dialogVisible"
+  :title="dailogTitle"
+  width="500px"
+  center
+  top="12vh"
+  :modal-append-to-body="false"
+  @close="closeDialog"
+>
+  <div class="batchEditDialog">
+    <div class="batchEditDialog-wrapper">
+      <el-form class="search-form" label-width="134px">
+        <el-form-item label="选择要修改的字段">
+          <el-select
+            class="table-select"
+            v-model="editField"
+            placeholder="选择要修改的字段"
+          >
+            <el-option
+              :label="item.label"
+              :value="item.key"
+              v-for="item in editFieldData"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="修改为">
+          <template
+            v-for="form in [selectedEditFieldObj && selectedEditFieldObj.code ? form.fieldCode : form]"
+          >
+            <!-- 其他 -->
+            <div class="code-content" v-if="form && selectedEditFieldObj">
+              <template v-if="selectedEditFieldObj.type === 'input'">
+                <el-input
+                  v-model="form[selectedEditFieldObj.key]"
+                  placeholder="请输入"
+                  :type="selectedEditFieldObj.detailType || 'text'"
+                  size="medium"
+                >
+                </el-input>
+              </template>
+              <template v-else-if="selectedEditFieldObj.type === 'textarea'">
+                <el-input
+                  type="textarea"
+                  v-model="form[selectedEditFieldObj.key]"
+                  :rows="2"
+                  placeholder="请输入"
+                  size="medium"
+                >
+                </el-input>
+              </template>
+              <template v-else-if="selectedEditFieldObj.type === 'select'">
+                <el-select
+                  v-if="selectedEditFieldObj.type != 'view'"
+                  popper-class="engineeringInfo-smallSize"
+                  clearable
+                  :filterable="selectedEditFieldObj.filterable"
+                  class="maxWidth"
+                  :multiple="selectedEditFieldObj.detailType == 'multiple'"
+                  :allow-create="selectedEditFieldObj.allowCreate ? selectedEditFieldObj.allowCreate : false"
+                  :collapse-tags="selectedEditFieldObj.detailType == 'multiple'"
+                  v-model="form[selectedEditFieldObj.key]"
+                  placeholder="请选择"
+                  size="medium"
+                >
+                  <el-option
+                    v-for="option in (selectedEditFieldObj.options || [])"
+                    :label="option.text"
+                    :value="option.value"
+                    :key="option.value"
+                  >
+                  </el-option>
+                </el-select>
+                <div
+                  v-if="selectedEditFieldObj.needOther && form[selectedEditFieldObj.key] == '其他'"
+                >
+                  <el-input
+                    v-model="form[selectedEditFieldObj.key + '_other']"
+                    placeholder="请输入具体内容"
+                  ></el-input>
+                </div>
+              </template>
+              <template v-else-if="selectedEditFieldObj.type === 'date'">
+                <el-date-picker
+                  class="maxWidth"
+                  v-model="form[selectedEditFieldObj.key]"
+                  type="date"
+                  size="medium"
+                  value-format="yyyy-MM-dd"
+                  placeholder="选择日期"
+                >
+                </el-date-picker>
+              </template>
+            </div>
+          </template>
+        </el-form-item>
+      </el-form>
+    </div>
+
+    <div class="tableContainer" v-loading="saveLoading">
+      <el-table
+        :data="tableData"
+        class="el-table--scrollable-y diyTable"
+        size="medium"
+        :border="true"
+        stripe
+        :header-cell-style="{background: '#F5F5F5'}"
+        height="100%"
+        style="width: 100%"
+      >
+        <el-table-column label="排口编号" prop="systemId"></el-table-column>
+        <el-table-column
+          :label="selectedEditFieldObj ? selectedEditFieldObj.label : ''"
+        >
+          <el-table-column label="修改前" prop="beforeEditVal">
+            <template slot-scope="scope">
+              <div class="code-content" v-if="selectedEditFieldObj">
+                {{$parent.getValue(selectedEditFieldObj, scope.row)}}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="修改后" prop="afterEditVal">
+            <template slot-scope="scope">
+              <div class="code-content" v-if="selectedEditFieldObj">
+                {{$parent.getValue(selectedEditFieldObj, form)}}
+              </div>
+            </template>
+          </el-table-column>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <div class="dialog-btns">
+      <el-button @click="batchEditSave">保存修改</el-button>
+      <el-button class="cancel-btn" @click="closeDialog">取消</el-button>
+    </div>
+  </div>
+</el-dialog>
